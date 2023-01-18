@@ -61,7 +61,7 @@ function Lottery() {
     const [result, setResult] = useState([])
     const [resultAmount, setResultAmount] = useState(0)
     const [add, setAdd] = useState(false)
-    const [addItem, setAddItem] = useState({category:lottery[lottery.length-1].category+1})
+    const [addItem, setAddItem] = useState({category:lottery[lottery.length-1].category+1, amount : 1})
     
     useEffect(() => {
         // 在載入頁面和每抽出一個獎項時,重新計算權重
@@ -70,19 +70,31 @@ function Lottery() {
             
     },[lottery])
 
+    // 抽獎事件
     const handleClick = () => {
         let randomNumber = Math.random() * totalWeight;
+        // if Math.random() = 0.5685 && totalWright = 100
+        // randomNumber = 56.85
         for (const item of lottery) {
+            // | 1 | 2 | 3 | 4 | 5 |
+            // | 5%| 5%|30%|10%|50%|
+            // | 5 | 10|40 |50 |100|
             randomNumber -= item.originalWeight;
+            // iteration 1 randomNumber = 56.85 - 5 = 51.85 -- do nothing
+            // iteration 2 randomNumber = 51.85 - 5 = 46.85 -- do nothing
+            // iteration 3 randomNumber = 45.85 - 30 = 15.85 -- do nothing
+            // iteration 4 randomNumber = 15.85 - 10 = 5.85 -- do nothing
+            // iteration 5 randomNumber = 5.85 - 50 = -45.85 -- 5 was chosen
             if (randomNumber <= 0) {
+                // 該獎項數目大於0
                 if (item.amount > 0) {
-                    // 該獎項數目大於0
                     item.amount--;
                     item.resultWeight++;
                     setLottery([...lottery]);
                     setResult([...result,item.category])
                     return item;
                 } else {
+                    // 如果獎項被抽完則重新抽
                     return handleClick();
                 }
             }
@@ -90,6 +102,7 @@ function Lottery() {
         
     }
 
+    // 更改獎項數量
     const changeItemAmount = (category, amount) => {
         const updatedLottery = lottery.map( v => {
           if (v.category === category) {
@@ -100,18 +113,20 @@ function Lottery() {
         setLottery(updatedLottery);
       }
 
+    // 移除(篩選)獎項
     const handleRemove = (category) => {
         const removeCategory = lottery.filter(v => v.category !== category)
         setLottery(removeCategory)
        
     }
 
+    // 增加獎項
     const addPrize = () => {
-        setLottery([...lottery,{...addItem,originalWeight: 0,resultWeight:0}])
+        setLottery([...lottery,{...addItem, originalWeight: 0.1, resultWeight:0}])
         setAdd(false)
     }
 
-    
+    // 改變權重
     const changeWeight = (category, weight) => {
         const newArr = lottery.map(v => {
             if(v.category === category.category){
@@ -140,7 +155,10 @@ function Lottery() {
                     return(
                         <tr key={index}>
                             <td>{v.category}</td>
-                            <td><input min={1} type='number' value={v.amount} onChange={(e)=>changeItemAmount(v.category, e.target.value)} /></td>
+                            <td>
+                                <input min={1} type='number' value={v.amount} 
+                                onChange={(e)=>changeItemAmount(v.category, e.target.value)} />
+                            </td>
                             <td><button onClick={() => handleRemove(v.category)}>移除</button></td>
                         </tr>
                     )
@@ -149,12 +167,12 @@ function Lottery() {
                 <tfoot>
                     <tr>
                         <td><button onClick={() => {
-                            setLottery((prev) => prev = originalLottery)
-                            setResult((prev) => prev = [] )
+                            setLottery((prev) => prev = originalLottery);
+                            setResult((prev) => prev = [] );
                         }}>重設</button></td>
                         <td onClick={()=>{
-                            setAdd(true)
-                            setAddItem({category:lottery[lottery.length-1].category+1,amount:0})
+                            setAdd(true);
+                            setAddItem({category:lottery[lottery.length-1].category+1,amount:0});
                         }}><button>增加獎項</button></td>
                         <td ><button  onClick={handleClick}>抽獎</button></td>
                     </tr>
@@ -162,14 +180,14 @@ function Lottery() {
                     {add && 
                     <tr>
                         <td><input type='number' value={addItem.category} onChange={(e) => {
-                            setAddItem({...addItem,category: +e.target.value})
+                            setAddItem({...addItem, category: +e.target.value});
                         }}/></td>
-                        <td><input min={1} type='number' value={1} onChange={(e) => {
-                            setAddItem({...addItem,amount: +e.target.value})
+                        <td><input min={1} type='number' value={addItem.amount} onChange={(e) => {
+                            setAddItem({...addItem, amount: +e.target.value});
                         }}/></td>
                         <td><button onClick={() =>{
-                            setAdd(false)
-                            setAddItem({})
+                            setAdd(false);
+                            setAddItem({});
                             }}>移除</button></td>
                         <td><button onClick={addPrize}>完成</button></td>
                     </tr>}
