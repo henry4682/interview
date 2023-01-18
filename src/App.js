@@ -4,7 +4,7 @@ import Lottery from './pages/Lottery/Lottery';
 import Sum from './pages/Sum/Sum';
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/interview">
       <Link to='/Sum'>第一題</Link>
       <Link to='/Lottery'>第二題</Link>
       <a href='https://reurl.cc/6L8Xr5'>第三題</a>
