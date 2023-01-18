@@ -1,0 +1,19 @@
+.container{
+    display: flex;
+    justify-content: space-evenly;
+    table{
+        border-collapse: collapse;
+        th,td{
+            border: 1px solid #333;
+            width: 50px;
+            text-align: center;
+            word-break: break-all;
+            input{
+                width: 80%;
+            }
+        }
+    }
+    .result{
+        width: 200px;
+    }
+}
