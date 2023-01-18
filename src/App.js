@@ -1,21 +1,19 @@
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
-import Home from './Home';
 import Lottery from './pages/Lottery/Lottery';
 import Sum from './pages/Sum/Sum';
 function App() {
   return (
     <BrowserRouter>
+      <Link to='/Sum'>第一題</Link>
+      <Link to='/Lottery'>第二題</Link>
+      <a href='https://reurl.cc/6L8Xr5'>第三題</a>
+      
       <Routes>
-        <Route path='/' element={<Home/>}></Route>
-        <Route path='/Sum' element={<Sum/> }></Route>
+        <Route path='/' element={<Sum/>}></Route>
+        <Route path='/Sum'  element={<Sum/> }></Route>
         <Route path='/Lottery' element={<Lottery/>}></Route>
-        <Route></Route>
       </Routes>
-
-      <Link to='/Lottery'>Lottery</Link>
-      <Link to='/Sum'>Sum</Link>
-      <Link></Link>
 
     </BrowserRouter>
   );
