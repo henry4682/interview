@@ -2,6 +2,34 @@ import React, { useEffect, useState } from 'react'
 import './Lottery.scss';
 
 function Lottery() {
+    const originalLottery = [
+        {
+            category:1,
+            amount:1,
+            originalWeight:5,
+            resultWeight:0
+        },{
+            category:2,
+            amount:1,
+            originalWeight:5,
+            resultWeight:0
+        },{
+            category:3,
+            amount:2,
+            originalWeight:30,
+            resultWeight:0
+        },{
+            category:4,
+            amount:3,
+            originalWeight:20,
+            resultWeight:0
+        },{
+            category:5,
+            amount:6,
+            originalWeight:40,
+            resultWeight:0
+        }];
+
     const [lottery, setLottery] = useState([
         {
             category:1,
@@ -37,8 +65,8 @@ function Lottery() {
     
     useEffect(() => {
         // 在載入頁面和每抽出一個獎項時,重新計算權重
-        setTotalWeight((prev) => prev = lottery.reduce((sum, item) => sum + item.originalWeight, 0))
-        setResultAmount((prev) => prev = lottery.reduce((sum, item) => sum + item.resultWeight, 0))
+        setTotalWeight(prev => prev = lottery.reduce((sum, item) => sum + item.originalWeight, 0))
+        setResultAmount(prev => prev = lottery.reduce((sum, item) => sum + item.resultWeight, 0))
             
     },[lottery])
 
@@ -112,7 +140,7 @@ function Lottery() {
                     return(
                         <tr key={index}>
                             <td>{v.category}</td>
-                            <td><input type='number' value={v.amount} onChange={(e)=>changeItemAmount(v.category, e.target.value)} /></td>
+                            <td><input min={1} type='number' value={v.amount} onChange={(e)=>changeItemAmount(v.category, e.target.value)} /></td>
                             <td><button onClick={() => handleRemove(v.category)}>移除</button></td>
                         </tr>
                     )
@@ -120,7 +148,11 @@ function Lottery() {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colSpan={2} onClick={()=>{
+                        <td><button onClick={() => {
+                            setLottery((prev) => prev = originalLottery)
+                            setResult((prev) => prev = [] )
+                        }}>重設</button></td>
+                        <td onClick={()=>{
                             setAdd(true)
                             setAddItem({category:lottery[lottery.length-1].category+1,amount:0})
                         }}><button>增加獎項</button></td>
@@ -132,7 +164,7 @@ function Lottery() {
                         <td><input type='number' value={addItem.category} onChange={(e) => {
                             setAddItem({...addItem,category: +e.target.value})
                         }}/></td>
-                        <td><input type='number' defaultValue={0} onChange={(e) => {
+                        <td><input min={1} type='number' value={1} onChange={(e) => {
                             setAddItem({...addItem,amount: +e.target.value})
                         }}/></td>
                         <td><button onClick={() =>{
@@ -175,7 +207,7 @@ function Lottery() {
                         <td>預期抽出機率</td>
                         {lottery.map((v,i) => {
                             return(
-                                <td key={i}><input type='number' onChange={(e) => changeWeight(v, +e.target.value)} value={+v.originalWeight} />%</td>
+                                <td key={i}><input min={1} max={100} type='number' onChange={(e) => changeWeight(v, +e.target.value)} value={+v.originalWeight} />%</td>
                             )
                         })}
                     </tr>
@@ -183,7 +215,8 @@ function Lottery() {
                         <td>實際抽出機率</td>
                         {lottery.map((v,i) => {
                             return(
-                                <td key={i}>{Math.round(v.resultWeight*100/resultAmount)|| 0}%</td>
+                                <td key={i}>{
+                                    (isNaN((v.resultWeight*100/resultAmount).toFixed(2))) ? 0 : (v.resultWeight*100/resultAmount).toFixed(2) }%</td>
                             )
                         })}
                     </tr>
